@@ -6,56 +6,53 @@ class CardDao {
     this.cards = [];
   }
 
-  async create({ word, definition,deck}) {
+  async create({ word, definition, deck }) {
     if (word === undefined || word === "") {
       throw new ApiError(400, "Every card must have a word!");
     }
     if (definition === undefined) {
       throw new ApiError(400, "Every card must have a definition!");
     }
-    const card = new Card(word, definition,deck);
-    this.cards.push(card);
+    const card = await Card.create({ word, definition, deck });
     return card;
   }
 
-  async update(id, { word, definition, deck}) {
-    const index = this.cards.findIndex((card) => card._id === id);
-    if (index === -1) {
+  async update(id, { word, definition, deck }) {
+    const card = await Card.findByIdAndUpdate(
+      id,
+      { word, definition, deck },
+      { new: true, runValidators: true }
+    );
+    if (card === null) {
       throw new ApiError(404, "There is no card with the given ID!");
     }
-    
-    if (word === undefined || definition === undefined) {
-      return this.cards[index];
-    }
-    this.cards[index].word = word;
-    this.cards[index].definition = definition;
-    if (deck !== undefined) {
-      this.cards[index].deck = deck;
-    }
-    return this.cards[index];
+    return card;
   }
 
   async delete(id) {
-    const index = this.cards.findIndex((card) => card._id === id);
-    if (index === -1) {
+    const card = await Card.findByIdAndDelete(id);
+    if (card === null) {
       throw new ApiError(404, "There is no card with the given ID!");
     }
-    const card = this.card[index];
-    this.cards.splice(index, 1);
-    return card
+    return card;
   }
 
   async read(id) {
-    return this.cards.find((card) => card._id === id);
+    const card = await Card.findById(id);
+    return card ? card : [];
   }
 
   async readAll(query = "") {
     if (query !== "") {
-      return this.cards.filter(
-        (card) => card.word.includes(query) || card.definition.includes(query) || card.deck.includes(query)
-      );
+      const cards = await Card.find().or([
+        { word: { $regex: query, $options: "i" } },
+        { definition: { $regex: query, $options: "i" } },
+        { deck: { $regex: query, $options: "i" } },
+      ]);
+      return cards;
     }
-    return this.cards;
+    const cards = await Card.find({});
+    return cards;
   }
 }
 

@@ -1,11 +1,8 @@
-const { v4: uuidv4 } = require("uuid");
-class Card {
-  constructor(word, definition,deck) {
-    this.word = word;
-    this.definition = definition;
-    this._id = uuidv4();
-    this.deck = deck;
-  }
-}
-
+const mongoose = require("mongoose");
+const CardSchema = new mongoose.Schema({
+  word: { type: String },
+  definition: { type: String },
+  deck: { type: String }
+});
+const Card = mongoose.model("Card", CardSchema);
 module.exports = Card;
