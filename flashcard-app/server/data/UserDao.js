@@ -3,7 +3,6 @@ const ApiError = require("../model/ApiError");
 const { hashPassword } = require("../util/hashing");
 
 class UserDao {
-
   async create({ username, password, role }) {
     if (username === undefined || username === "") {
       throw new ApiError(400, "Every user must have a username!");
@@ -16,28 +15,36 @@ class UserDao {
     if (role !== "ADMIN" && role !== "CLIENT") {
       throw new ApiError(400, "Every user must have a valid role!");
     }
+
     const hash = await hashPassword(password);
     const user = await User.create({ username, password: hash, role });
-    return user;
+    return {
+      _id: user._id.toString(),
+      username: user.username,
+      password: user.password,
+      role: user.role,
+    };
   }
 
   // to update or reset password, or to change role.
   async update(id, { password, role }) {
-    const user = await User.findByIdAndUpdate(
+    await this.read(id);
+    return User.findByIdAndUpdate(
       id,
       { password, role },
       { new: true, runValidators: true }
-    );
-
-    if (user === null) {
-      throw new ApiError(404, "There is no user with the given ID!");
-    }
-
-    return user;
+    )
+      .lean()
+      .select("-__v");
   }
 
   async delete(id) {
-    const user = await User.findByIdAndDelete(id);
+    await this.read(id);
+    return User.findByIdAndDelete(id).lean().select("-__v");
+  }
+
+  async read(id) {
+    const user = await User.findById(id).lean().select("-__v");
 
     if (user === null) {
       throw new ApiError(404, "There is no user with the given ID!");
@@ -46,27 +53,16 @@ class UserDao {
     return user;
   }
 
-  // returns an empty array if there is no user with the given ID
-  async read(id) {
-    const user = await User.findById(id);
-    return user ? user : [];
-  }
-
-  // returns null if no user matches the search query
+  // returns empty array if no user matches the username
   async readOne(username) {
-    const user = await User.findOne({ username });
-    return user;
+    return User.find({ username }).lean().select("-__v");
   }
 
   // returns an empty array if there is no user in the database
   //  or no user matches the user role query
   async readAll(role = "") {
-    if (role !== "") {
-      const users = await User.find({ role });
-      return users;
-    }
-    const users = await User.find({});
-    return users;
+    const filter = role === "" ? {} : { role };
+    return User.find(filter).lean().select("-__v");
   }
 }
 

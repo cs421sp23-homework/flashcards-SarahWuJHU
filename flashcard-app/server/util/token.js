@@ -1,5 +1,10 @@
 const jwt = require("jsonwebtoken");
 
+const parseBearer = (bearer) => {
+  const [_, token] = bearer.trim().split(" ");
+  return token;
+};
+
 const createToken = (user) => {
   return jwt.sign(
     {
@@ -32,7 +37,14 @@ const verifyToken = (token) => {
   });
 };
 
+const decodeToken = (token) => {
+  const decoded = jwt.decode(token);
+  return decoded;
+}
+
 module.exports = {
   createToken,
   verifyToken,
+  decodeToken,
+  parseBearer
 };

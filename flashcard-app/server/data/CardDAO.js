@@ -1,4 +1,5 @@
 const Card = require("../model/Card");
+const mongoose = require("mongoose");
 const ApiError = require("../model/ApiError");
 
 class CardDao {
@@ -6,52 +7,64 @@ class CardDao {
     this.cards = [];
   }
 
-  async create({ word, definition, deck }) {
+  async create({ word, definition, deck, author }) {
     if (word === undefined || word === "") {
       throw new ApiError(400, "Every card must have a word!");
     }
     if (definition === undefined) {
       throw new ApiError(400, "Every card must have a definition!");
     }
-    const card = await Card.create({ word, definition, deck });
+    if (!author || !mongoose.isValidObjectId(author)) {
+      throw new ApiError(400, "Every note must have an author!");
+    }
+    const card = await Card.create({ word, definition, deck, author });
     return card;
   }
 
-  async update(id, { word, definition, deck }) {
-    const card = await Card.findByIdAndUpdate(
+  async update(author, id, { word, definition, deck }) {
+    await this.read(author, id);
+    return Card.findByIdAndUpdate(
       id,
       { word, definition, deck },
       { new: true, runValidators: true }
     );
-    if (card === null) {
-      throw new ApiError(404, "There is no card with the given ID!");
-    }
-    return card;
   }
 
-  async delete(id) {
-    const card = await Card.findByIdAndDelete(id);
-    if (card === null) {
-      throw new ApiError(404, "There is no card with the given ID!");
-    }
-    return card;
+  async delete(author, id) {
+    await this.read(author, id);
+    return Card.findByIdAndDelete(id);
   }
 
-  async read(id) {
+  async read(author, id) {
     const card = await Card.findById(id);
-    return card ? card : [];
+    if (!author || !mongoose.isValidObjectId(author)) {
+      throw new ApiError(500, "Author attribute was is invalid or missing!");
+    }
+    if (card === null) {
+      throw new ApiError(404, "There is no note with the given ID!");
+    }
+    if (card.author.toString() !== author) {
+      throw new ApiError(
+        403,
+        "You are not authorized to access this resource!"
+      );
+    }
+    return card;
   }
 
-  async readAll(query = "") {
-    if (query !== "") {
-      const cards = await Card.find().or([
-        { word: { $regex: query, $options: "i" } },
-        { definition: { $regex: query, $options: "i" } },
-        { deck: { $regex: query, $options: "i" } },
-      ]);
-      return cards;
+  async readAll(author, query = "") {
+    if (!author || !mongoose.isValidObjectId(author)) {
+      throw new ApiError(500, "Author attribute was is invalid or missing!");
     }
-    const cards = await Card.find({});
+    const cards = await Card.find({ author });
+    if (query !== "") {
+      return cards.filter(
+        (card) =>
+          card.word.includes(query) ||
+          card.definition.includes(query) ||
+          card.deck.includes(query)
+      );
+    }
     return cards;
   }
 }
