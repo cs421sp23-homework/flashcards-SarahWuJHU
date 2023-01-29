@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
-
-const URI = `mongodb+srv://flashcardadmin:dine5340FORM@flashcard.vhxtsdf.mongodb.net/?retryWrites=true&w=majority`;
+require("dotenv").config();
 
 async function connect() {
   try {
-    await mongoose.connect(URI);
+    await mongoose.connect(process.env.DB_URI);
     console.log("Connected to MongoDB!");
   } catch (err) {
     console.log(err);
