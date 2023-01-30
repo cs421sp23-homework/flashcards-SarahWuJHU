@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const jwt_decode = require("jwt-decode");
 
 const parseBearer = (bearer) => {
   const [_, token] = bearer.trim().split(" ");
@@ -38,7 +39,7 @@ const verifyToken = (token) => {
 };
 
 const decodeToken = (token) => {
-  const decoded = jwt.decode(token);
+  const decoded = jwt_decode(token);
   return decoded;
 }
 

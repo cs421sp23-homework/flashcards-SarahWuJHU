@@ -1,67 +1,72 @@
 const express = require("express");
 const UserDao = require("../data/UserDao");
+const ApiError = require("../model/ApiError");
 const { verifyPassword } = require("../util/hashing");
 const { createToken, verifyToken } = require("../util/token");
+
 const router = express.Router();
 const users = new UserDao();
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    const data = await users.create({ username, password, role: "CLIENT" });
-    res.status(201).json({ data });
+    const user = await users.create({ username, password, role: "CLIENT" });
+    const token = createToken(user);
+    return res.status(201).json({
+      message: "Registration successful!",
+      token: token,
+    });
   } catch (err) {
-    res.status(err.status || 500).json({ message: err.message });
+    next(err);
   }
 });
 
-router.post("/authenticate", async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({
-      message: "You must provide both username and password.",
-    });
-  }
-
+router.post("/authenticate", async (req, res, next) => {
   try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      throw new ApiError(400, "You must provide both username and password.");
+    }
+
     const user = await users.readOne(username);
+    const hashedPassword = (user && user[0] && user[0].password) || "";
 
     // Authentication!
-    const isAuthenticated = await verifyPassword(
-      password,
-      user ? user.password : ""
-    );
+    const isAuthenticated = await verifyPassword(password, hashedPassword);
     if (!isAuthenticated) {
-      return res.status(403).json({
-        message: "Wrong username or password!",
-      });
+      throw new ApiError(403, "Wrong username or password!");
     } else {
-      const token = createToken(user);
+      const token = createToken(user[0]);
       return res.json({
         message: "Authentication successful!",
         token: token,
       });
     }
   } catch (err) {
-    return res.status(err.status || 500).json({ message: err.message });
+    next(err);
   }
 });
 
-router.post("/verify", async (req, res) => {
-  const { token } = req.body;
-  const isValid = await verifyToken(token);
+router.post("/verify", async (req, res, next) => {
+  try {
+    if (!req.body || !req.body.token) {
+      throw new ApiError(400, "You must provide a token in request's payload!");
+    }
 
-  if (!isValid) {
-    return res.status(403).json({
-      message: "Invalid or expired token!",
+    const { token } = req.body;
+    const isValid = await verifyToken(token);
+
+    if (!isValid) {
+      throw new ApiError(403, "Invalid or expired token!");
+    }
+
+    return res.json({
+      message: "Token verified, and it is valid!",
+      token: token,
     });
+  } catch (err) {
+    next(err);
   }
-
-  return res.json({
-    message: "Token verified, and it is valid!",
-    token: token,
-  });
 });
 
 module.exports = router;

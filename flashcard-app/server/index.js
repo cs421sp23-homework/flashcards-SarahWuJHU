@@ -7,7 +7,9 @@ const cards = require("./routes/cards.js");
 const users = require("./routes/users.js");
 const auth = require("./routes/auth.js");
 const cors = require("cors");
+const helmet = require("helmet");
 app.use(cors());
+app.use(helmet());
 
 db.connect()
 
