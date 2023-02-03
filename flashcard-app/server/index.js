@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 app.use(express.json());
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 9000;
 const db = require("./data/db");
 const cards = require("./routes/cards.js");
 const users = require("./routes/users.js");
