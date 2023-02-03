@@ -8,8 +8,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import ScaleText from "react-scale-text";
 import { Component } from "react";
+import { withStyles } from "@material-ui/core";
 
 const styles = {
   card: {
@@ -18,11 +18,11 @@ const styles = {
     height: "16rem",
   },
   cardContent: {
-    minHeight: "8rem",
+    minHeight: "13rem",
+    maxHeight: "13rem",
   },
   cardActions: {
     height: "3rem",
-    disableSpacing: true
   },
   iconButton: {
     marginLeft: "auto",
@@ -30,6 +30,7 @@ const styles = {
     height: "3rem",
     borderRadius: "50%",
   },
+
   expandMore: {
     position: "absolute",
     left: "0",
@@ -65,19 +66,18 @@ class FlashCard extends Component {
     return (
       <Grid item>
         <Card style={styles.card}>
-          <CardContent>
-            <Typography variant="body3">
-              <div
-                className="parent"
-                style={{ width: "12rem", height: "8rem" }}
-              >
-                <ScaleText widthOnly={false}>
-                  <p className="child">
-                    {this.state.isFlipped ? content.word : content.definition}
-                  </p>
-                </ScaleText>
-              </div>
-            </Typography>
+          <CardContent style={styles.cardContent}>
+            <div
+              style={{
+                overflow: "scroll",
+                textOverflow: "ellipsis",
+                maxHeight:"12rem"
+              }}
+            >
+              <Typography>
+              {this.state.isFlipped ? content.word : content.definition}
+              </Typography>
+            </div>
           </CardContent>
           <CardActions style={styles.cardActions}>
             <Button size="small" onClick={this.handleFlipClick}>
@@ -104,4 +104,4 @@ class FlashCard extends Component {
   }
 }
 
-export default FlashCard;
+export default withStyles(styles)(FlashCard);
