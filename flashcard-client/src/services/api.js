@@ -58,7 +58,7 @@ async function update(card) {
 async function register(user) {
   try {
     const response = await axiosInstance.post(`/register`, user);
-    return response.data.data;
+    return response;
   } catch (err) {
     throw err;
   }
@@ -67,7 +67,7 @@ async function register(user) {
 async function authenticate(user) {
   try {
     const response = await axiosInstance.post(`/authenticate`, user);
-    return response.data.data;
+    return response;
   } catch (err) {
     throw err;
   }

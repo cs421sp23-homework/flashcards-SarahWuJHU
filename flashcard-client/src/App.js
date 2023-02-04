@@ -1,9 +1,18 @@
 import React, { Component } from "react";
-import CardDeck from "./components/CardDeck";
 import { Container } from "@mui/material";
-import Header from "./components/Header";
 import { Routes, Route } from "react-router";
 import DisplayCards from "./pages/DisplayCards";
+import LoginPage from "./pages/LoginPage";
+import {
+  setToken,
+  get,
+  getAll,
+  create,
+  remove,
+  update,
+  register,
+  authenticate,
+} from "./services/api.js";
 
 class App extends Component {
   constructor(props) {
@@ -33,6 +42,35 @@ class App extends Component {
     };
   }
 
+  async userRegister(user) {
+    try {
+      const response = await register(user);
+      this.setState((state) => {
+        state.token = response.data.token;
+        return state;
+      });
+      console.log(this.state);
+      return "Register Successful!";
+    } catch (err) {
+      return "Your username has already been registered!";
+    }
+  }
+
+  async userLogin(user) {
+    try {
+      const response = await authenticate(user);
+      console.log(response.data);
+      this.setState((state) => {
+        state.token = response.data.token;
+        return state;
+      });
+      console.log("hi");
+      return "Register Successful!";
+    } catch (err) {
+      return "Invalid username/password!";
+    }
+  }
+
   organizeCards(cards) {
     let decks = {};
     for (const card in cards) {
@@ -42,7 +80,7 @@ class App extends Component {
         decks[cards[card].deck] = [cards[card]];
       }
     }
-    return decks
+    return decks;
   }
 
   render() {
@@ -50,7 +88,19 @@ class App extends Component {
     return (
       <Container>
         <Routes>
-          <Route path="/" element={<DisplayCards decks={this.organizeCards(cards)}/>}/>
+          <Route
+            path="/auth"
+            element={
+              <LoginPage
+                userLogin={this.userLogin}
+                userRegister={this.userRegister}
+              />
+            }
+          />
+          <Route
+            path="/"
+            element={<DisplayCards decks={this.organizeCards(cards)} />}
+          />
         </Routes>
       </Container>
     );
