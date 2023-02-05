@@ -6,7 +6,7 @@ function Header() {
   return (
     <AppBar
       style={{ background: "#2E3B55", width: "100%" }}
-      position="inherent"
+      position="sticky"
     >
       <Toolbar>
         <Box py={3}>

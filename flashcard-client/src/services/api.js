@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 });
 
 function setToken(token) {
-  axiosInstance.defaults.headers.Authorization = token;
+  axiosInstance.defaults.headers.Authorization = `Bearer ${token}`;
 }
 
 async function get(url) {

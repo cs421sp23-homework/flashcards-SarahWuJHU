@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, setState } from "react";
 import { Container } from "@mui/material";
 import { Routes, Route } from "react-router";
 import DisplayCards from "./pages/DisplayCards";
@@ -19,6 +19,7 @@ class App extends Component {
     super(props);
     this.state = {
       token: "",
+      authorized:false,
       cards: [
         {
           _id: "63d6c1c51467a50be8d30f58",
@@ -40,35 +41,49 @@ class App extends Component {
         },
       ],
     };
+    this.userLogin = this.userLogin.bind(this);
+    this.userRegister = this.userRegister.bind(this);
+    this.organizeCards = this.organizeCards.bind(this);
+    this.initializeCards = this.initializeCards.bind(this);
   }
 
   async userRegister(user) {
     try {
       const response = await register(user);
       this.setState((state) => {
+        state.authorized = true;
         state.token = response.data.token;
         return state;
       });
-      console.log(this.state);
-      return "Register Successful!";
+      this.initializeCards();
+      return {m:"Register Successful!"};
     } catch (err) {
-      return "Your username has already been registered!";
+      return {m:"Your username has already been registered!"};
     }
   }
 
   async userLogin(user) {
     try {
       const response = await authenticate(user);
-      console.log(response.data);
       this.setState((state) => {
+        state.authorized = true;
         state.token = response.data.token;
         return state;
       });
-      console.log("hi");
-      return "Register Successful!";
+      this.initializeCards();
+      return {m:"Log in Successful!"};
     } catch (err) {
-      return "Invalid username/password!";
+      return {m:"Invalid username/password!"};
     }
+  }
+
+  async initializeCards() {
+    setToken(this.state.token);
+    const cards = await getAll();
+    this.setState((state) => {
+      state.cards = cards;
+      return state;
+    });
   }
 
   organizeCards(cards) {
@@ -84,12 +99,12 @@ class App extends Component {
   }
 
   render() {
-    const { cards } = this.state;
+    const { cards, authorized } = this.state;
     return (
       <Container>
         <Routes>
           <Route
-            path="/auth"
+            path="/"
             element={
               <LoginPage
                 userLogin={this.userLogin}
@@ -98,8 +113,8 @@ class App extends Component {
             }
           />
           <Route
-            path="/"
-            element={<DisplayCards decks={this.organizeCards(cards)} />}
+            path= {`/display`}
+            element={<DisplayCards decks={this.organizeCards(cards)} auth={authorized}/>}
           />
         </Routes>
       </Container>
