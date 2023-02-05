@@ -1,12 +1,9 @@
 import { List, Fab, withStyles } from "@material-ui/core";
+import { Navigate } from "react-router-dom";
 import Add from "@mui/icons-material/Add";
 import CardDeck from "../components/CardDeck";
 import { Container } from "@mui/material";
 import Header from "../components/Header";
-import AppBar from "@material-ui/core/AppBar";
-import Box from "@material-ui/core/Box";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 
 const styles = {
   fab: {
@@ -17,22 +14,9 @@ const styles = {
 };
 
 function DisplayCards(props) {
-  const { decks, authorized } = props;
-  if (!authorized) {
-    return (
-      <Container>
-        <AppBar
-          style={{ background: "#2E3B55", width: "100%" }}
-          position="sticky"
-        >
-          <Toolbar>
-            <Box py={3}>
-              <Typography variant="h4">403 Forbidden</Typography>
-            </Box>
-          </Toolbar>
-        </AppBar>
-      </Container>
-    );
+  const { decks, auth } = props;
+  if (!auth) {
+    return <Navigate replace to="/login" />;
   }
 
   let decklist = [];

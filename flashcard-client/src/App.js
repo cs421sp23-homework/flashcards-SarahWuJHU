@@ -104,7 +104,7 @@ class App extends Component {
       <Container>
         <Routes>
           <Route
-            path="/"
+            path="login"
             element={
               <LoginPage
                 userLogin={this.userLogin}
@@ -113,7 +113,7 @@ class App extends Component {
             }
           />
           <Route
-            path= {`/display`}
+            path= "display"
             element={<DisplayCards decks={this.organizeCards(cards)} auth={authorized}/>}
           />
         </Routes>
