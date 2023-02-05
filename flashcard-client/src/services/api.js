@@ -36,7 +36,7 @@ async function create(card) {
 
 async function remove(card) {
   try {
-    const response = await axiosInstance.delete(`/api/courses/${card._id}`);
+    const response = await axiosInstance.delete(`/api/cards/${card._id}`);
     return response.data.data;
   } catch (err) {
     throw err;

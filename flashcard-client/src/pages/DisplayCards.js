@@ -14,14 +14,14 @@ const styles = {
 };
 
 function DisplayCards(props) {
-  const { decks, auth } = props;
+  const { decks, auth, deleteCard } = props;
   if (!auth) {
     return <Navigate replace to="/login" />;
   }
 
   let decklist = [];
   for (const deck in decks) {
-    decklist.push(<CardDeck deck={decks[deck]} title={deck} key={deck} />);
+    decklist.push(<CardDeck deck={decks[deck]} title={deck} key={deck} deleteCard={deleteCard}/>);
   }
   return (
     <Container>

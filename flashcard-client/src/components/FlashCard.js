@@ -54,11 +54,19 @@ class FlashCard extends Component {
       isFlipped: true,
     };
     this.handleFlipClick = this.handleFlipClick.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   handleFlipClick(e) {
     e.preventDefault();
     this.setState((prevState) => ({ isFlipped: !prevState.isFlipped }));
+  }
+
+  async handleDelete(e){
+    e.preventDefault();
+    const card = this.props.content;
+    const m  = await this.props.deleteCard(card);
+    console.log(m);
   }
 
   render() {
@@ -92,7 +100,7 @@ class FlashCard extends Component {
                 <MenuItem value="edit">
                   <Typography variant="body1">Edit</Typography>
                 </MenuItem>
-                <MenuItem value="delete">
+                <MenuItem value="delete" onClick={this.handleDelete}>
                   <Typography variant="body1">Delete</Typography>
                 </MenuItem>
               </Select>

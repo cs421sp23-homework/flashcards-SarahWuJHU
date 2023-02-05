@@ -2,10 +2,10 @@ import React, { Component, setState } from "react";
 import { Container } from "@mui/material";
 import { Routes, Route } from "react-router";
 import DisplayCards from "./pages/DisplayCards";
+import { Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import {
   setToken,
-  get,
   getAll,
   create,
   remove,
@@ -19,7 +19,7 @@ class App extends Component {
     super(props);
     this.state = {
       token: "",
-      authorized:false,
+      authorized: false,
       cards: [
         {
           _id: "63d6c1c51467a50be8d30f58",
@@ -45,6 +45,9 @@ class App extends Component {
     this.userRegister = this.userRegister.bind(this);
     this.organizeCards = this.organizeCards.bind(this);
     this.initializeCards = this.initializeCards.bind(this);
+    this.deleteCard = this.deleteCard.bind(this);
+    this.updateCard = this.updateCard.bind(this);
+    this.addCard = this.addCard.bind(this);
   }
 
   async userRegister(user) {
@@ -56,9 +59,9 @@ class App extends Component {
         return state;
       });
       this.initializeCards();
-      return {m:"Register Successful!"};
+      return { m: "Register Successful!", status:true };
     } catch (err) {
-      return {m:"Your username has already been registered!"};
+      return { m: "Your username has already been registered!",status:false };
     }
   }
 
@@ -71,9 +74,9 @@ class App extends Component {
         return state;
       });
       this.initializeCards();
-      return {m:"Log in Successful!"};
+      return { m: "Log in Successful!",status:true };
     } catch (err) {
-      return {m:"Invalid username/password!"};
+      return { m: "Invalid username/password!",status:false };
     }
   }
 
@@ -98,11 +101,70 @@ class App extends Component {
     return decks;
   }
 
+  async addCard(c) {
+    if (!c) {
+      return "Invalid card";
+    }
+    if (!c.word || !c.definition || !c.deck) {
+      return "Invalid Card";
+    }
+    setToken(this.state.token);
+    try {
+      const card = await create(c);
+      this.setState((state) => {
+        state.cards.push(card);
+        return state;
+      });
+      return "Card successfully Added!";
+    } catch (err) {
+      return "Invalid card";
+    }
+  }
+
+  async updateCard(card) {
+    if (!card) {
+      return "Invalid card";
+    }
+    if (!card.word || !card.definition || !card.deck) {
+      return "Invalid card";
+    }
+    setToken(this.state.token);
+    try {
+      const c = await update(card);
+      this.setState((state) => {
+        state.cards = state.cards.map((n) => (n._id === c._id ? c : n));
+        return state;
+      });
+      return "Card successfully updated!";
+    } catch (err) {
+      return "Invalid card";
+    }
+  }
+
+  async deleteCard(card) {
+    if (!card._id) {
+      return "Invalid card";
+    }
+    setToken(this.state.token);
+    try {
+      const c = await remove(card);
+      this.setState((state) => {
+        state.cards = state.cards.filter((n) => (n._id !== c._id));
+        return state;
+      });
+      console.log(this.state.cards);
+      return "Card succesfully deleted!";
+    } catch (err) {
+      return "Invalid card";
+    }
+  }
+
   render() {
     const { cards, authorized } = this.state;
     return (
       <Container>
         <Routes>
+          <Route path="/" element={<Navigate replace to="/login" />} />
           <Route
             path="login"
             element={
@@ -113,8 +175,14 @@ class App extends Component {
             }
           />
           <Route
-            path= "display"
-            element={<DisplayCards decks={this.organizeCards(cards)} auth={authorized}/>}
+            path="display"
+            element={
+              <DisplayCards
+                decks={this.organizeCards(cards)}
+                auth={authorized}
+                deleteCard={this.deleteCard}
+              />
+            }
           />
         </Routes>
       </Container>

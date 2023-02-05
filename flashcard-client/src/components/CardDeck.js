@@ -10,7 +10,7 @@ import CourseCard from "./FlashCard";
 
 class CardDeck extends Component {
     render() {
-      const { deck, title } = this.props;
+      const { deck, title, deleteCard} = this.props;
   
       return (
         <Accordion defaultExpanded={false}>
@@ -31,6 +31,7 @@ class CardDeck extends Component {
                   <CourseCard
                     key={index}
                     content={content}
+                    deleteCard = {deleteCard}
                   />
                 );
               })}
