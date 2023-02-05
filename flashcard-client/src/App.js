@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router";
 import DisplayCards from "./pages/DisplayCards";
 import { Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
+import UpsertCards from "./pages/UpsertCards";
 import {
   setToken,
   getAll,
@@ -184,6 +185,7 @@ class App extends Component {
               />
             }
           />
+          <Route path="add" element={<UpsertCards auth={authorized}/>}/>
         </Routes>
       </Container>
     );

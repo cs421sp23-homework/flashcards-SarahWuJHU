@@ -4,6 +4,7 @@ import Add from "@mui/icons-material/Add";
 import CardDeck from "../components/CardDeck";
 import { Container } from "@mui/material";
 import Header from "../components/Header";
+import { Link } from "react-router-dom";
 
 const styles = {
   fab: {
@@ -21,15 +22,24 @@ function DisplayCards(props) {
 
   let decklist = [];
   for (const deck in decks) {
-    decklist.push(<CardDeck deck={decks[deck]} title={deck} key={deck} deleteCard={deleteCard}/>);
+    decklist.push(
+      <CardDeck
+        deck={decks[deck]}
+        title={deck}
+        key={deck}
+        deleteCard={deleteCard}
+      />
+    );
   }
   return (
     <Container>
       <Header />
       <List>{decklist}</List>
-      <Fab aria-label={"Add"} style={styles.fab}>
-        <Add />
-      </Fab>
+      <Link to="/add">
+        <Fab aria-label={"Add"} style={styles.fab}>
+          <Add />
+        </Fab>
+      </Link>
     </Container>
   );
 }
