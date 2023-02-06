@@ -3,14 +3,14 @@ import Grid from "@material-ui/core/Grid";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import IconButton from "@material-ui/core/IconButton";
-import ExpandMore from "@mui/icons-material/ExpandMore";
+import { ExpandMore, Delete, Edit } from "@mui/icons-material";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Component } from "react";
 import { withStyles } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const styles = {
   card: {
@@ -56,6 +56,7 @@ class FlashCard extends Component {
     };
     this.handleFlipClick = this.handleFlipClick.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
   }
 
   handleFlipClick(e) {
@@ -68,6 +69,20 @@ class FlashCard extends Component {
     const card = this.props.content;
     const m = await this.props.deleteCard(card);
     console.log(m);
+  }
+
+  handleEdit(e) {
+    e.preventDefault();
+    const content = this.props.content;
+    this.props.navigate({
+      pathname: "/edit",
+      search: `?id=${content._id}`,
+      state: {card:{word: content.word,
+        definition: content.definition,
+        _id: content._id,
+        deck: content.deck,}
+      },
+    });
   }
 
   render() {
@@ -92,32 +107,11 @@ class FlashCard extends Component {
             <Button size="small" onClick={this.handleFlipClick}>
               Flip
             </Button>
-            <IconButton style={styles.iconButton}>
-              <ExpandMore style={styles.expandMore} />
-              <Select style={styles.select} value={"actions"}>
-                <MenuItem value="actions">
-                  <Typography variant="body1">Actions ...</Typography>
-                </MenuItem>
-                <MenuItem value="edit">
-                  <Link
-                    to={{
-                      pathname: "/edit",
-                      search: `?id=${content._id}`,
-                      state: {
-                        word: content.word,
-                        definition: content.definition,
-                        _id: content._id,
-                        deck: content.deck
-                      },
-                    }}
-                  >
-                    <Typography variant="body1">Edit</Typography>
-                  </Link>
-                </MenuItem>
-                <MenuItem value="delete" onClick={this.handleDelete}>
-                  <Typography variant="body1">Delete</Typography>
-                </MenuItem>
-              </Select>
+            <IconButton style={styles.iconButton} onClick={this.handleDelete}>
+                <Delete />
+            </IconButton>
+            <IconButton style={styles.iconButton} onClick={this.handleEdit}>
+                <Edit />
             </IconButton>
           </CardActions>
         </Card>
@@ -125,5 +119,8 @@ class FlashCard extends Component {
     );
   }
 }
-
-export default withStyles(styles)(FlashCard);
+function WithNavigate(props) {
+  let navigate = useNavigate();
+  return <FlashCard {...props} navigate={navigate} />;
+}
+export default withStyles(styles)(WithNavigate);

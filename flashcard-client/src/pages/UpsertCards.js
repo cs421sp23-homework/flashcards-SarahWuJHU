@@ -34,18 +34,21 @@ class UpsertCards extends Component {
     this.setState({
       word: event.target.value,
     });
+    document.getElementById("message").innerText = "Please enter word, deck, and definition!";
   };
 
   updateDefinition = (event) => {
     this.setState({
       definition: event.target.value,
     });
+    document.getElementById("message").innerText = "Please enter word, deck, and definition!";
   };
 
   updateDeck = (event) => {
     this.setState({
       deck: event.target.value,
     });
+    document.getElementById("message").innerText = "Please enter word, deck, and definition!";
   };
 
   handleCancel = (event) => {
@@ -61,7 +64,7 @@ class UpsertCards extends Component {
   }
 
   render() {
-    console.log(this.props);
+    console.log(this.props)
     if (!this.props.auth) {
       return <Navigate replace to="/login" />;
     }
