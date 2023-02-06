@@ -21,26 +21,7 @@ class App extends Component {
     this.state = {
       token: "",
       authorized: false,
-      cards: [
-        {
-          _id: "63d6c1c51467a50be8d30f58",
-          word: "accusamus",
-          definition:
-            "Qui quis aut sint nobis aut est dignissimos numquam ut. Praesentium cum rerum temporibus nam. Quam et laudantium delectus voluptates sit. Labore ut quod fuga. Harum dignissimos omnis laborum deleniti consequatur. Numquam natus ut animi alias quas excepturi tenetur veniam ut.",
-          deck: "sequi",
-          author: "63d6c1c41467a50be8d30f56",
-          __v: 0,
-        },
-        {
-          _id: "63d6c1c51467a50be8d30f5a",
-          word: "optio",
-          definition:
-            "Minima voluptatum sed dolorum laborum rerum explicabo. Non laudantium nihil est id facere asperiores recusandae. Odio possimus aspernatur alias adipisci temporibus exercitationem fugiat aperiam consequatur. Temporibus minima labore perspiciatis excepturi molestias sed id dolore. Libero repudiandae tempore doloribus enim reiciendis. Animi impedit est tenetur tenetur deserunt ea.",
-          deck: "consequatur",
-          author: "63d6c1c41467a50be8d30f56",
-          __v: 0,
-        },
-      ],
+      cards: [],
     };
     this.userLogin = this.userLogin.bind(this);
     this.userRegister = this.userRegister.bind(this);
@@ -60,9 +41,9 @@ class App extends Component {
         return state;
       });
       this.initializeCards();
-      return { m: "Register Successful!", status:true };
+      return { m: "Register Successful!", status: true };
     } catch (err) {
-      return { m: "Your username has already been registered!",status:false };
+      return { m: "Your username has already been registered!", status: false };
     }
   }
 
@@ -75,9 +56,9 @@ class App extends Component {
         return state;
       });
       this.initializeCards();
-      return { m: "Log in Successful!",status:true };
+      return { m: "Log in Successful!", status: true };
     } catch (err) {
-      return { m: "Invalid username/password!",status:false };
+      return { m: "Invalid username/password!", status: false };
     }
   }
 
@@ -118,7 +99,7 @@ class App extends Component {
       });
       return "Card successfully Added!";
     } catch (err) {
-      return "Invalid card";
+      return "Invalid card (please make sure all fields are filled!)";
     }
   }
 
@@ -150,7 +131,7 @@ class App extends Component {
     try {
       const c = await remove(card);
       this.setState((state) => {
-        state.cards = state.cards.filter((n) => (n._id !== c._id));
+        state.cards = state.cards.filter((n) => n._id !== c._id);
         return state;
       });
       console.log(this.state.cards);
@@ -185,7 +166,14 @@ class App extends Component {
               />
             }
           />
-          <Route path="add" element={<UpsertCards auth={authorized}/>}/>
+          <Route
+            path="add"
+            element={<UpsertCards auth={authorized} upsertCard={this.addCard} />}
+          />
+          <Route
+            path="edit"
+            element={<UpsertCards auth={authorized} upsertCard={this.updateCard} />}
+          />
         </Routes>
       </Container>
     );

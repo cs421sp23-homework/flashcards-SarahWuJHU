@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Component } from "react";
 import { withStyles } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 const styles = {
   card: {
@@ -62,10 +63,10 @@ class FlashCard extends Component {
     this.setState((prevState) => ({ isFlipped: !prevState.isFlipped }));
   }
 
-  async handleDelete(e){
+  async handleDelete(e) {
     e.preventDefault();
     const card = this.props.content;
-    const m  = await this.props.deleteCard(card);
+    const m = await this.props.deleteCard(card);
     console.log(m);
   }
 
@@ -79,11 +80,11 @@ class FlashCard extends Component {
               style={{
                 overflow: "scroll",
                 textOverflow: "ellipsis",
-                maxHeight:"12rem"
+                maxHeight: "12rem",
               }}
             >
               <Typography>
-              {this.state.isFlipped ? content.word : content.definition}
+                {this.state.isFlipped ? content.word : content.definition}
               </Typography>
             </div>
           </CardContent>
@@ -98,7 +99,20 @@ class FlashCard extends Component {
                   <Typography variant="body1">Actions ...</Typography>
                 </MenuItem>
                 <MenuItem value="edit">
-                  <Typography variant="body1">Edit</Typography>
+                  <Link
+                    to={{
+                      pathname: "/edit",
+                      search: `?id=${content._id}`,
+                      state: {
+                        word: content.word,
+                        definition: content.definition,
+                        _id: content._id,
+                        deck: content.deck
+                      },
+                    }}
+                  >
+                    <Typography variant="body1">Edit</Typography>
+                  </Link>
                 </MenuItem>
                 <MenuItem value="delete" onClick={this.handleDelete}>
                   <Typography variant="body1">Delete</Typography>
