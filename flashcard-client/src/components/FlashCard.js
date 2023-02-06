@@ -3,14 +3,12 @@ import Grid from "@material-ui/core/Grid";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import IconButton from "@material-ui/core/IconButton";
-import { ExpandMore, Delete, Edit } from "@mui/icons-material";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
+import { Delete, Edit } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Component } from "react";
 import { withStyles } from "@material-ui/core";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const styles = {
   card: {
@@ -77,10 +75,11 @@ class FlashCard extends Component {
     this.props.navigate({
       pathname: "/edit",
       search: `?id=${content._id}`,
-      state: {card:{word: content.word,
+      state: {
+        word: content.word,
         definition: content.definition,
         _id: content._id,
-        deck: content.deck,}
+        deck: content.deck,
       },
     });
   }
@@ -107,11 +106,22 @@ class FlashCard extends Component {
             <Button size="small" onClick={this.handleFlipClick}>
               Flip
             </Button>
-            <IconButton style={styles.iconButton} onClick={this.handleDelete}>
+            <Link
+              to={`/edit?id=${content._id}`}
+              state={{
+                word: content.word,
+                definition: content.definition,
+                _id: content._id,
+                deck: content.deck,
+              }}
+            >
+              <IconButton style={styles.iconButton}>
                 <Delete />
-            </IconButton>
+              </IconButton>
+            </Link>
+
             <IconButton style={styles.iconButton} onClick={this.handleEdit}>
-                <Edit />
+              <Edit />
             </IconButton>
           </CardActions>
         </Card>

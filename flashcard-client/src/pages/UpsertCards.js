@@ -2,7 +2,7 @@ import { FormControl, TextField, Button, Paper } from "@material-ui/core";
 import { Navigate } from "react-router-dom";
 import { Component } from "react";
 import { withStyles } from "@material-ui/core";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate,useParams } from "react-router-dom";
 
 const styles = {
   form: {
@@ -53,7 +53,7 @@ class UpsertCards extends Component {
 
   handleCancel = (event) => {
     event.preventDefault();
-    this.props.navigate("/display");
+    this.props.router.navigate("/display");
   };
 
   async handleSubmit(e) {
@@ -64,6 +64,8 @@ class UpsertCards extends Component {
   }
 
   render() {
+    const location = this.props.router.location;
+    console.log(location)
     console.log(this.props)
     if (!this.props.auth) {
       return <Navigate replace to="/login" />;
@@ -120,9 +122,19 @@ class UpsertCards extends Component {
   }
 }
 
-function WithNavigate(props) {
-  let navigate = useNavigate();
-  return <UpsertCards {...props} navigate={navigate} />;
+function withRouter(UpsertCards) {
+  function ComponentWithRouterProp(props) {
+    let location = useLocation();
+    let navigate = useNavigate();
+    let params = useParams();
+    return (
+      <UpsertCards
+        {...props}
+        router={{ location, navigate, params }}
+      />
+    );
+  }
+  return ComponentWithRouterProp;
 }
 
-export default withStyles(styles)(WithNavigate);
+export default withStyles(styles)(withRouter(UpsertCards));
