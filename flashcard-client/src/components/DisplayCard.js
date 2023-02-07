@@ -2,54 +2,40 @@ import Card from "@mui/material/Card";
 import Grid from "@material-ui/core/Grid";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import IconButton from "@material-ui/core/IconButton";
-import { Delete, Edit } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Component } from "react";
 import { withStyles } from "@material-ui/core";
-import { useNavigate } from "react-router-dom";
 
 const styles = {
   card: {
     margin: "1rem",
-    width: "16rem",
-    height: "16rem",
+    width: "70rem",
+    height: "30rem",
   },
   cardContent: {
-    minHeight: "13rem",
-    maxHeight: "13rem",
+    minHeight: "26rem",
+    maxHeight: "26rem",
   },
   cardActions: {
-    height: "3rem",
+    height: "5rem",
   },
 
   iconButton: {
     marginLeft: "auto",
-    width: "3rem",
-    height: "3rem",
+    width: "4rem",
+    height: "4rem",
     borderRadius: "50%",
-  },
-
-  expandMore: {
-    position: "absolute",
-    left: "0",
-    top: "0",
-    width: "100%",
-    height: "100%",
-    padding: "0.5rem",
   },
 };
 
-class FlashCard extends Component {
+class DisplayCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isFlipped: true,
     };
     this.handleFlipClick = this.handleFlipClick.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleEdit = this.handleEdit.bind(this);
   }
 
   handleFlipClick(e) {
@@ -57,30 +43,9 @@ class FlashCard extends Component {
     this.setState((prevState) => ({ isFlipped: !prevState.isFlipped }));
   }
 
-  async handleDelete(e) {
-    e.preventDefault();
-    const card = this.props.content;
-    const m = await this.props.deleteCard(card);
-    console.log(m);
-  }
-
-  handleEdit(e) {
-    e.preventDefault();
-    const content = this.props.content;
-    this.props.navigate(`/edit?id=${content._id}`, {
-      state: {
-        word: content.word,
-        definition: content.definition,
-        _id: content._id,
-        deck: content.deck,
-      },
-    });
-  }
-
   render() {
     const { content } = this.props;
     return (
-      <Grid item>
         <Card style={styles.card}>
           <CardContent style={styles.cardContent}>
             <div
@@ -99,20 +64,9 @@ class FlashCard extends Component {
             <Button size="small" onClick={this.handleFlipClick}>
               Flip
             </Button>
-            <IconButton style={styles.iconButton} onClick={this.handleDelete}>
-              <Delete />
-            </IconButton>
-            <IconButton style={styles.iconButton} onClick={this.handleEdit}>
-              <Edit />
-            </IconButton>
           </CardActions>
         </Card>
-      </Grid>
     );
   }
 }
-function WithNavigate(props) {
-  let navigate = useNavigate();
-  return <FlashCard {...props} navigate={navigate} />;
-}
-export default withStyles(styles)(WithNavigate);
+export default withStyles(styles)(DisplayCard);

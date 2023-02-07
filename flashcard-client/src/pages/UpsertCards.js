@@ -70,6 +70,7 @@ class UpsertCards extends Component {
   async handleSubmit(e) {
     e.preventDefault();
     const card = this.state;
+    console.log(this.state);
     const m = await this.props.upsertCard(card);
     document.getElementById("message").innerText = m;
   }

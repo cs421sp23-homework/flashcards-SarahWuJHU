@@ -1,10 +1,11 @@
-import React, { Component, setState } from "react";
+import React, { Component } from "react";
 import { Container } from "@mui/material";
 import { Routes, Route } from "react-router";
 import DisplayCards from "./pages/DisplayCards";
 import { Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import UpsertCards from "./pages/UpsertCards";
+import StudyDeck from "./pages/StudyDeck";
 import {
   setToken,
   getAll,
@@ -104,6 +105,7 @@ class App extends Component {
   }
 
   async updateCard(card) {
+    console.log(card);
     if (!card) {
       return "Invalid card";
     }
@@ -173,6 +175,10 @@ class App extends Component {
           <Route
             path="edit"
             element={<UpsertCards auth={authorized} upsertCard={this.updateCard} />}
+          />
+          <Route
+            path="read"
+            element={<StudyDeck auth={authorized} deck={[]}/>}
           />
         </Routes>
       </Container>
