@@ -60,8 +60,7 @@ class FlashCard extends Component {
   async handleDelete(e) {
     e.preventDefault();
     const card = this.props.content;
-    const m = await this.props.deleteCard(card);
-    console.log(m);
+    await this.props.deleteCard(card);
   }
 
   handleEdit(e) {

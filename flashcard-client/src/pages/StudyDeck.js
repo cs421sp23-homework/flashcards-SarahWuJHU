@@ -36,7 +36,7 @@ class StudyDeck extends Component {
   handlePrev = () => {
     this.setState((state) => {
       if (state.index === 0) {
-        state.index = state.deck.length;
+        state.index = state.deck.length-1;
       } else {
         state.index = state.index - 1;
       }

@@ -46,7 +46,7 @@ async function remove(card) {
 async function update(card) {
   try {
     const response = await axiosInstance.put(
-      `/api/courses/${card._id}`,
+      `/api/cards/${card._id}`,
       card
     );
     return response.data.data;

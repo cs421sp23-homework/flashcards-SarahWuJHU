@@ -105,7 +105,6 @@ class App extends Component {
   }
 
   async updateCard(card) {
-    console.log(card);
     if (!card) {
       return "Invalid card";
     }
@@ -136,7 +135,6 @@ class App extends Component {
         state.cards = state.cards.filter((n) => n._id !== c._id);
         return state;
       });
-      console.log(this.state.cards);
       return "Card succesfully deleted!";
     } catch (err) {
       return "Invalid card";
