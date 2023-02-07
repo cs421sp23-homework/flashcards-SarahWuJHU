@@ -16,7 +16,7 @@ Then start the server locally with
 
 This will start the server at http://localhost:9000/, you can open `server/index.js` to change the corresponding port if you would like. 
 ### Starting Frontend Webpage
-Open a different terminal at the root of this directory. Then, move the the client folder:
+Open a different terminal at the root of this directory. Then, move to the client folder:
 
 `cd flashcard-client`
 
