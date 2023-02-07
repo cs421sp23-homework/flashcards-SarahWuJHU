@@ -72,9 +72,7 @@ class FlashCard extends Component {
   handleEdit(e) {
     e.preventDefault();
     const content = this.props.content;
-    this.props.navigate({
-      pathname: "/edit",
-      search: `?id=${content._id}`,
+    this.props.navigate(`/edit?id=${content._id}`, {
       state: {
         word: content.word,
         definition: content.definition,
@@ -106,20 +104,9 @@ class FlashCard extends Component {
             <Button size="small" onClick={this.handleFlipClick}>
               Flip
             </Button>
-            <Link
-              to={`/edit?id=${content._id}`}
-              state={{
-                word: content.word,
-                definition: content.definition,
-                _id: content._id,
-                deck: content.deck,
-              }}
-            >
-              <IconButton style={styles.iconButton}>
-                <Delete />
-              </IconButton>
-            </Link>
-
+            <IconButton style={styles.iconButton} onClick={this.handleEdit}>
+              <Delete />
+            </IconButton>
             <IconButton style={styles.iconButton} onClick={this.handleEdit}>
               <Edit />
             </IconButton>

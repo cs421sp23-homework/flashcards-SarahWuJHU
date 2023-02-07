@@ -1,4 +1,4 @@
-import React, { useState, Component } from "react";
+import React, {  Component } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -26,7 +26,7 @@ class LoginPage extends Component {
     const res = await this.props.userLogin(user);
     document.getElementById("message").innerText = res.m;
     if (res.status) {
-      this.props.navigate("/display");
+      this.props.navigate("/display",{ replace: true });
     }
   }
 
@@ -39,7 +39,7 @@ class LoginPage extends Component {
     const res = await this.props.userRegister(user);
     document.getElementById("message").innerText = res.m;
     if (res.status) {
-      this.props.navigate("/display");
+      this.props.navigate("/display",{ replace: true });
     }
   }
 

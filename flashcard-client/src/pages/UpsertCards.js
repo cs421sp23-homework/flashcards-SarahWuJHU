@@ -2,7 +2,7 @@ import { FormControl, TextField, Button, Paper } from "@material-ui/core";
 import { Navigate } from "react-router-dom";
 import { Component } from "react";
 import { withStyles } from "@material-ui/core";
-import { useLocation, useNavigate,useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const styles = {
   form: {
@@ -19,6 +19,7 @@ class UpsertCards extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      _id: "",
       word: "",
       definition: "",
       deck: "",
@@ -30,30 +31,40 @@ class UpsertCards extends Component {
     this.updateWord = this.updateWord.bind(this);
   }
 
+  componentDidMount = () => {
+    const { state } = this.props.router.location;
+    if (state) {
+      this.setState(state);
+    }
+  };
+
   updateWord = (event) => {
     this.setState({
       word: event.target.value,
     });
-    document.getElementById("message").innerText = "Please enter word, deck, and definition!";
+    document.getElementById("message").innerText =
+      "Please enter word, deck, and definition!";
   };
 
   updateDefinition = (event) => {
     this.setState({
       definition: event.target.value,
     });
-    document.getElementById("message").innerText = "Please enter word, deck, and definition!";
+    document.getElementById("message").innerText =
+      "Please enter word, deck, and definition!";
   };
 
   updateDeck = (event) => {
     this.setState({
       deck: event.target.value,
     });
-    document.getElementById("message").innerText = "Please enter word, deck, and definition!";
+    document.getElementById("message").innerText =
+      "Please enter word, deck, and definition!";
   };
 
   handleCancel = (event) => {
     event.preventDefault();
-    this.props.router.navigate("/display");
+    this.props.router.navigate("/display", { replace: true });
   };
 
   async handleSubmit(e) {
@@ -64,9 +75,6 @@ class UpsertCards extends Component {
   }
 
   render() {
-    const location = this.props.router.location;
-    console.log(location)
-    console.log(this.props)
     if (!this.props.auth) {
       return <Navigate replace to="/login" />;
     }
@@ -77,6 +85,7 @@ class UpsertCards extends Component {
             <TextField
               label="Word"
               variant="outlined"
+              value={this.state.word}
               onChange={this.updateWord}
             />
           </FormControl>
@@ -86,6 +95,7 @@ class UpsertCards extends Component {
             <TextField
               label="Deck (automatically creates/changes decks)"
               variant="filled"
+              value={this.state.deck}
               onChange={this.updateDeck}
             />
           </FormControl>
@@ -97,6 +107,7 @@ class UpsertCards extends Component {
               label="Definition"
               multiline
               minRows={6}
+              value={this.state.definition}
               variant="outlined"
               onChange={this.updateDefinition}
             />
@@ -127,12 +138,7 @@ function withRouter(UpsertCards) {
     let location = useLocation();
     let navigate = useNavigate();
     let params = useParams();
-    return (
-      <UpsertCards
-        {...props}
-        router={{ location, navigate, params }}
-      />
-    );
+    return <UpsertCards {...props} router={{ location, navigate, params }} />;
   }
   return ComponentWithRouterProp;
 }
